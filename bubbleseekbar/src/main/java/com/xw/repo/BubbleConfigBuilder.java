@@ -43,6 +43,7 @@ public class BubbleConfigBuilder {
     int bubbleTextSize;
     int bubbleTextColor;
     boolean alwaysShowBubble;
+    boolean alwaysHideBubble;
 
     private BubbleSeekBar mBubbleSeekBar;
 
@@ -201,6 +202,11 @@ public class BubbleConfigBuilder {
 
     public BubbleConfigBuilder alwaysShowBubble() {
         this.alwaysShowBubble = true;
+        return this;
+    }
+
+    public BubbleConfigBuilder alwaysHideBubble() {
+        this.alwaysHideBubble = true;
         return this;
     }
 

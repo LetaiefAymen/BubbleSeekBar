@@ -84,6 +84,7 @@ public class BubbleSeekBar extends View {
     private boolean isSeekBySection; // seek by section, the progress may not be linear
     private long mAnimDuration; // duration of animation
     private boolean isAlwaysShowBubble; // bubble shows all time
+    private boolean isAlwaysHideBubble; // bubble hide all time
 
     private int mBubbleColor;// color of bubble
     private int mBubbleTextSize; // text size of bubble-progress
@@ -174,6 +175,7 @@ public class BubbleSeekBar extends View {
         mAnimDuration = duration < 0 ? 200 : duration;
         isTouchToSeek = a.getBoolean(R.styleable.BubbleSeekBar_bsb_touch_to_seek, false);
         isAlwaysShowBubble = a.getBoolean(R.styleable.BubbleSeekBar_bsb_always_show_bubble, false);
+        isAlwaysHideBubble = a.getBoolean(R.styleable.BubbleSeekBar_bsb_always_hide_bubble, false);
         a.recycle();
 
         mPaint = new Paint();
@@ -192,7 +194,9 @@ public class BubbleSeekBar extends View {
                 String.valueOf(getProgressFloat()) : String.valueOf(getProgress()));
 
         initConfigByPriority();
-        calculateRadiusOfBubble();
+        if(!isAlwaysHideBubble) {
+            calculateRadiusOfBubble();
+        }
     }
 
     private void initConfigByPriority() {
@@ -958,10 +962,12 @@ public class BubbleSeekBar extends View {
         mBubbleTextSize = builder.bubbleTextSize;
         mBubbleTextColor = builder.bubbleTextColor;
         isAlwaysShowBubble = builder.alwaysShowBubble;
+        isAlwaysHideBubble = builder.alwaysHideBubble;
 
         initConfigByPriority();
-        calculateRadiusOfBubble();
-
+        if(!isAlwaysHideBubble) {
+            calculateRadiusOfBubble();
+        }
         if (mProgressListener != null) {
             mProgressListener.onProgressChanged(getProgress(), getProgressFloat());
             mProgressListener.getProgressOnFinally(getProgress(), getProgressFloat());
