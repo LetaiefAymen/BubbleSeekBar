@@ -33,6 +33,9 @@ import com.xw.repo.bubbleseekbar.R;
 import java.lang.annotation.Retention;
 import java.lang.annotation.RetentionPolicy;
 import java.math.BigDecimal;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.List;
 
 import static com.xw.repo.BubbleSeekBar.TextPosition.BELOW_SECTION_MARK;
 import static com.xw.repo.BubbleSeekBar.TextPosition.BOTTOM_SIDES;
@@ -85,6 +88,7 @@ public class BubbleSeekBar extends View {
     private long mAnimDuration; // duration of animation
     private boolean isAlwaysShowBubble; // bubble shows all time
     private boolean isAlwaysHideBubble; // bubble hide all time
+    private List<String> progressStringArray = new ArrayList<>(); // string array
 
     private int mBubbleColor;// color of bubble
     private int mBubbleTextSize; // text size of bubble-progress
@@ -176,6 +180,10 @@ public class BubbleSeekBar extends View {
         isTouchToSeek = a.getBoolean(R.styleable.BubbleSeekBar_bsb_touch_to_seek, false);
         isAlwaysShowBubble = a.getBoolean(R.styleable.BubbleSeekBar_bsb_always_show_bubble, false);
         isAlwaysHideBubble = a.getBoolean(R.styleable.BubbleSeekBar_bsb_always_hide_bubble, false);
+        int progressArrayRes = a.getInteger(R.styleable.BubbleSeekBar_bsb_progress_array, -1);
+        if (progressArrayRes != -1) {
+            progressStringArray = Arrays.asList(getResources().getStringArray(progressArrayRes));
+        }
         a.recycle();
 
         mPaint = new Paint();
@@ -472,11 +480,21 @@ public class BubbleSeekBar extends View {
                     if (mSectionTextInterval > 1) {
                         if (conditionInterval && i % mSectionTextInterval == 0) {
                             float m = mMin + mSectionValue * i;
+                          int progress = (int) m;
+                          if (!progressStringArray.isEmpty() && progress <= progressStringArray.size() && progress >= 0) {
+                            canvas.drawText(progressStringArray.get(progress), x_, y_, mPaint);
+                          } else {
                             canvas.drawText(isFloatType ? float2String(m) : (int) m + "", x_, y_, mPaint);
+                          }
                         }
                     } else {
                         float m = mMin + mSectionValue * i;
-                        canvas.drawText(isFloatType ? float2String(m) : (int) m + "", x_, y_, mPaint);
+                        int progress = (int) m;
+                        if (!progressStringArray.isEmpty() && progress <= progressStringArray.size() && progress >= 0) {
+                          canvas.drawText(progressStringArray.get(progress), x_, y_, mPaint);
+                        } else {
+                          canvas.drawText(isFloatType ? float2String(m) : (int) m + "", x_, y_, mPaint);
+                        }
                     }
                 }
             }
@@ -497,7 +515,12 @@ public class BubbleSeekBar extends View {
                     mProgress != mMin && mProgress != mMax)) {
                 canvas.drawText(String.valueOf(getProgressFloat()), mThumbCenterX, y_, mPaint);
             } else {
+              int progress = getProgress();
+              if (!progressStringArray.isEmpty() && progress<=progressStringArray.size() && progress>=0) {
+                canvas.drawText(progressStringArray.get(getProgress()), mThumbCenterX, y_, mPaint);
+              } else {
                 canvas.drawText(String.valueOf(getProgress()), mThumbCenterX, y_, mPaint);
+              }
             }
         }
 
@@ -566,6 +589,7 @@ public class BubbleSeekBar extends View {
                     showBubble();
                     invalidate();
                 } else if (isTouchToSeek && isTrackTouched(event)) {
+                  isTouchToSeekAnimEnd = false;
                     if (isAlwaysShowBubble) {
                         hideBubble();
                         triggerBubbleShowing = true;
@@ -963,6 +987,9 @@ public class BubbleSeekBar extends View {
         mBubbleTextColor = builder.bubbleTextColor;
         isAlwaysShowBubble = builder.alwaysShowBubble;
         isAlwaysHideBubble = builder.alwaysHideBubble;
+        if (builder.progressArrayListRes != -1) {
+          progressStringArray = Arrays.asList(getResources().getStringArray(builder.progressArrayListRes));
+        }
 
         initConfigByPriority();
         if(!isAlwaysHideBubble) {
@@ -1012,6 +1039,7 @@ public class BubbleSeekBar extends View {
         mConfigBuilder.bubbleTextSize = mBubbleTextSize;
         mConfigBuilder.bubbleTextColor = mBubbleTextColor;
         mConfigBuilder.alwaysShowBubble = isAlwaysShowBubble;
+        mConfigBuilder.alwaysHideBubble = isAlwaysHideBubble;
 
         return mConfigBuilder;
     }

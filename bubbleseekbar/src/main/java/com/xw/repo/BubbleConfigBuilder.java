@@ -1,5 +1,6 @@
 package com.xw.repo;
 
+import android.support.annotation.ArrayRes;
 import android.support.annotation.ColorInt;
 import android.support.annotation.IntRange;
 
@@ -44,6 +45,8 @@ public class BubbleConfigBuilder {
     int bubbleTextColor;
     boolean alwaysShowBubble;
     boolean alwaysHideBubble;
+    @ArrayRes
+    int progressArrayListRes = -1;
 
     private BubbleSeekBar mBubbleSeekBar;
 
@@ -197,6 +200,11 @@ public class BubbleConfigBuilder {
 
     public BubbleConfigBuilder bubbleTextColor(@ColorInt int color) {
         this.bubbleTextColor = color;
+        return this;
+    }
+
+    public BubbleConfigBuilder bubbleProgressArrayList(@ArrayRes int progressArrayListRes) {
+        this.progressArrayListRes = progressArrayListRes;
         return this;
     }
 
